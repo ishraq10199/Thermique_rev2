@@ -1,4 +1,4 @@
-## This codebase was cloned from goupgets, and modified for personal necessities.
+## This codebase was cloned from groupgets, and modified for personal necessities.
 
 
 ## raspberrypi_video [Edited]
