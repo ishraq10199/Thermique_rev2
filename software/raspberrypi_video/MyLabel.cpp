@@ -1,7 +1,9 @@
 #include "MyLabel.h"
+#include <iostream>
 
 MyLabel::MyLabel(QWidget *parent) : QLabel(parent)
 {
+  lastPoint = QPoint(-1, -1);
 }
 MyLabel::~MyLabel()
 {
@@ -17,4 +19,12 @@ void MyLabel::setImage(QImage image) {
 void MyLabel::connectToThread(LeptonThread * lt){
   this->thread = lt;
 
+}
+
+void MyLabel::mousePressEvent(QMouseEvent *event){
+  if (event->button() == Qt::LeftButton) {
+        lastPoint = event->pos();
+        std::cout << "Mouse click detected at (" << "X: " << lastPoint.x() << ", Y: " << lastPoint.y() << ")" << std::endl;
+        this->thread->lastPoint = lastPoint;
+    }
 }

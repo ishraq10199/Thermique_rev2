@@ -4,7 +4,7 @@
 #include <QtCore>
 #include <QWidget>
 #include <QLabel>
-
+#include <QMouseEvent>
 #include <LeptonThread.h>
 
 
@@ -15,11 +15,17 @@
 class MyLabel : public QLabel {
   Q_OBJECT;
   LeptonThread * thread;
+  QPoint lastPoint;
 
   public:
     MyLabel(QWidget *parent = 0);
     ~MyLabel();
     void connectToThread(LeptonThread * lt);
+
+  // ISHRAQ __ Overriding the following protected functions
+  protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    //void mouseMoveEvent(QMouseEvent *event) override;
 
   public slots:
     void setImage(QImage);

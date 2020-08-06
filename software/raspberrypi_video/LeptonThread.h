@@ -19,6 +19,8 @@ class LeptonThread : public QThread
   Q_OBJECT;
 
 public:
+  QPoint lastPoint;
+
   LeptonThread();
   ~LeptonThread();
 
@@ -54,7 +56,6 @@ private:
   int myImageWidth;
   int myImageHeight;
   QImage myImage;
-  QPoint lastPoint;
 
   uint8_t result[PACKET_SIZE*PACKETS_PER_FRAME];
   uint8_t shelf[4][PACKET_SIZE*PACKETS_PER_FRAME];

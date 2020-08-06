@@ -16,6 +16,7 @@
 
 LeptonThread::LeptonThread() : QThread()
 {
+	lastPoint = QPoint(-1, -1);
 	//
 	loglevel = 0;
 

@@ -2,6 +2,10 @@
 #include <QThread>
 #include <QMutex>
 #include <QMessageBox>
+#include <QString>
+
+#include <iostream>
+#include <string>
 
 #include <QColor>
 #include <QLabel>
@@ -128,13 +132,22 @@ int main( int argc, char **argv )
 	// __ [ISHRAQ] __ CREATE CUSTOM LABEL TO SHOW TEMPERATURE
 	QLabel * tempLabel = new QLabel(myWidget);
 	tempLabel->setGeometry(320/2 + 100, 290-35, 60, 30);
-	tempLabel->setText("TEMP");
+
+	
 
 
 
 	//create a thread to gather SPI data
 	//when the thread emits updateImage, the label should update its image accordingly
 	LeptonThread *thread = new LeptonThread();
+
+
+	// ISHRAQ _ CUSTOM LABEL UPDATE FROM thread
+	std::string s;
+	s =   "X: " + thread->lastPoint.x();
+	s +=  ", Y: " + thread->lastPoint.y();
+	std::cout << s;
+	tempLabel->setText(QString::fromStdString(s));
 
 	// ISHRAQ _ connect Mylabel object to thread, for temp extraction
 	myLabel.connectToThread(thread);
@@ -152,6 +165,10 @@ int main( int argc, char **argv )
 	QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
 	thread->start();
 	
+	//TODO: connect text area to TemperatureValue
+	//test_1: connect text area to pixel coords
+
+
 	myWidget->show();
 
 	return a.exec();
