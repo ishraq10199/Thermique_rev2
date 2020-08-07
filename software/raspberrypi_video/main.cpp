@@ -129,7 +129,7 @@ int main( int argc, char **argv )
 	button1->setGeometry(320/2-100, 290-35, 100, 30);
 
 
-	// __ [ISHRAQ] __ CREATE CUSTOM LABEL TO SHOW TEMPERATURE
+	// __ ISHRAQ __ CREATE CUSTOM LABEL TO SHOW TEMPERATURE [Future plan]
 	QLabel * tempLabel = new QLabel(myWidget);
 	tempLabel->setGeometry(320/2 + 100, 290-35, 60, 30);
 

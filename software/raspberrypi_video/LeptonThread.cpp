@@ -127,7 +127,11 @@ void LeptonThread::run()
 	SpiOpenPort(0, spiSpeed);
 	int flag = 1;
 
+	float temperatureOfPixel = 0;
+
 	while(true) {
+
+		// printf("%.2f\n",matrix[0][0]);
 
 		//read data packets from lepton over SPI
 		int resets = 0;
@@ -247,11 +251,11 @@ void LeptonThread::run()
 					}
 					break;
 				}
-				
-				//printf("%.2f, ", ((float)valueFrameBuffer/100 - 273.15));
-				
+
+				temperatureOfPixel = ((float)valueFrameBuffer/100 - 273.15);
 				
 				value = (valueFrameBuffer - minValue) * scale;
+				
 				int ofs_r = 3 * value + 0; if (colormapSize <= ofs_r) ofs_r = colormapSize - 1;
 				int ofs_g = 3 * value + 1; if (colormapSize <= ofs_g) ofs_g = colormapSize - 1;
 				int ofs_b = 3 * value + 2; if (colormapSize <= ofs_b) ofs_b = colormapSize - 1;
@@ -259,6 +263,7 @@ void LeptonThread::run()
 				if (typeLepton == 3) {
 					column = (i % PACKET_SIZE_UINT16) - 2 + (myImageWidth / 2) * ((i % (PACKET_SIZE_UINT16 * 2)) / PACKET_SIZE_UINT16);
 					row = i / PACKET_SIZE_UINT16 / 2 + ofsRow;
+					matrix[row][column] = temperatureOfPixel;
 				}
 				else {
 					column = (i % PACKET_SIZE_UINT16) - 2;
@@ -294,5 +299,14 @@ void LeptonThread::log_message(uint16_t level, std::string msg)
 	}
 }
 
+// ISHRAQ _ Simple Get temperature function, but since video feed is 320x240, 
+// the co-ordinates need to mapped to 160x120. Thankfully, 160x120 is simply half the resolution of 320x240,
+// So to map, x is divided by 2, and y is divided by 2 to get the index of 2D matrix
 
+float LeptonThread::getTempFromXY(int x, int y){
+	x = x/2;
+	y = y/2;
+	//printf("[Debug] Getting value from (%d, %d) : %.2f\n", x, y, matrix[y][x]);
+	return matrix[y][x];
+}
 

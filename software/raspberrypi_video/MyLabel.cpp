@@ -24,7 +24,7 @@ void MyLabel::connectToThread(LeptonThread * lt){
 void MyLabel::mousePressEvent(QMouseEvent *event){
   if (event->button() == Qt::LeftButton) {
         lastPoint = event->pos();
-        std::cout << "Mouse click detected at (" << "X: " << lastPoint.x() << ", Y: " << lastPoint.y() << ")" << std::endl;
+        std::cout << "Temperature: "<< this->thread->getTempFromXY(lastPoint.x(), lastPoint.y()) << "°C" << std::endl;
         this->thread->lastPoint = lastPoint;
     }
 }
