@@ -306,7 +306,22 @@ void LeptonThread::log_message(uint16_t level, std::string msg)
 float LeptonThread::getTempFromXY(int x, int y){
 	x = x/2;
 	y = y/2;
-	//printf("[Debug] Getting value from (%d, %d) : %.2f\n", x, y, matrix[y][x]);
+	printf("[Debug] Getting value from (%d, %d) : %.2f\n", x, y, matrix[y][x]);
 	return matrix[y][x];
 }
 
+
+float LeptonThread::getTempFromArea(int x1, int y1, int x2, int y2){
+	float maxValue = 0.0;
+	QPoint foundAt;
+	for(int i=y1; i<y2; i++){
+		for(int j=x1; j<x2; j++){
+			if(maxValue < matrix[i][j]){
+				maxValue = matrix[i][j];
+				foundAt = QPoint(j, i);
+			}
+		}
+	}
+	printf("[Debug] Found %.2f °C at the point (%d, %d)\n", maxValue, foundAt.x(), foundAt.y());
+	return maxValue;
+}

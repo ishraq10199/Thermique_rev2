@@ -16,6 +16,10 @@ class MyLabel : public QLabel {
   Q_OBJECT;
   LeptonThread * thread;
   QPoint lastPoint;
+  QPoint areaPointTopLeft;
+  QPoint areaPointBottomRight;
+  float extractedTemp;
+
 
   public:
     MyLabel(QWidget *parent = 0);

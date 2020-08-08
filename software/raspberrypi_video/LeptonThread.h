@@ -20,6 +20,7 @@ class LeptonThread : public QThread
 
 public:
   QPoint lastPoint;
+  float extractedTemp;
 
   // ISHRAQ __ CUSTOM 2D array that is constantly updated with values from frame
   // Lepton 3.5 is used, so using 120 rows, and 160 columns for each frame in buffer
@@ -29,6 +30,8 @@ public:
   ~LeptonThread();
 
   float getTempFromXY(int x, int y);
+  float getTempFromArea(int x1, int y1, int x2, int y2);
+
   void setLogLevel(uint16_t);
   void useColormap(int);
   void useLepton(int);
