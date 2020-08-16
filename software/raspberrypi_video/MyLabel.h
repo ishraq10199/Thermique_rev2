@@ -19,7 +19,7 @@ class MyLabel : public QLabel {
   QPoint areaPointTopLeft;
   QPoint areaPointBottomRight;
   float extractedTemp;
-
+  std::string strRead;
 
   public:
     MyLabel(QWidget *parent = 0);
@@ -29,6 +29,7 @@ class MyLabel : public QLabel {
   // ISHRAQ __ Overriding the following protected functions
   protected:
     void mousePressEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
     //void mouseMoveEvent(QMouseEvent *event) override;
 
   public slots:

@@ -32,6 +32,8 @@ public:
   float getTempFromXY(int x, int y);
   float getTempFromArea(int x1, int y1, int x2, int y2);
 
+  void startTimeout();
+
   void setLogLevel(uint16_t);
   void useColormap(int);
   void useLepton(int);
@@ -43,6 +45,8 @@ public:
 
 public slots:
   void performFFC();
+  void timeout();
+
 
 signals:
   void updateText(QString);

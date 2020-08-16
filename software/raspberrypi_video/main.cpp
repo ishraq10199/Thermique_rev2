@@ -15,6 +15,10 @@
 
 #include "LeptonThread.h"
 #include "MyLabel.h"
+#include "TempLabel.h"
+
+#define scaleFactor 6
+
 
 void printUsage(char *cmd) {
         char *cmdname = basename(cmd);
@@ -111,7 +115,7 @@ int main( int argc, char **argv )
 	//create an image placeholder for myLabel
 	//fill the top left corner with red, just bcuz
 	QImage myImage;
-	myImage = QImage(320, 240, QImage::Format_RGB888);
+	myImage = QImage(160, 120, QImage::Format_RGB888);
 	QRgb red = qRgb(255,0,0);
 	for(int i=0;i<80;i++) {
 		for(int j=0;j<60;j++) {
@@ -121,19 +125,19 @@ int main( int argc, char **argv )
 
 	//create a label, and set it's image to the placeholder
 	MyLabel myLabel(myWidget);
-	myLabel.setGeometry(10, 10, 320, 240);
+	myLabel.setGeometry(0, 0, 160*scaleFactor, 120*scaleFactor);
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
-
 	//create a FFC button
-	QPushButton *button1 = new QPushButton("FFC Reset", myWidget);
-	button1->setGeometry(320/2-100, 290-35, 100, 30);
+	//QPushButton *button1 = new QPushButton("FFC Reset", myWidget);
+	//button1->setGeometry(320/2-100, 600, 100, 30);
 
 
 	// __ ISHRAQ __ CREATE CUSTOM LABEL TO SHOW TEMPERATURE [Future plan]
-	QLabel * tempLabel = new QLabel(myWidget);
-	tempLabel->setGeometry(320/2 + 100, 290-35, 60, 30);
+	TempLabel * tempLabel = new TempLabel(myWidget);
+	tempLabel->connectToLabel(&myLabel);
+	tempLabel->setGeometry(960 + 20, 50 + 0, 500, 500);
 
-	
+
 
 
 
@@ -146,8 +150,15 @@ int main( int argc, char **argv )
 	std::string s;
 	s =   "X: " + thread->lastPoint.x();
 	s +=  ", Y: " + thread->lastPoint.y();
-	std::cout << s;
-	tempLabel->setText(QString::fromStdString(s));
+
+	tempLabel->setText("Not Scanned");
+
+	// SET FONT OF LABEL:
+	QFont font = tempLabel->font();
+	font.setPointSize(22);
+	font.setBold(true);
+	tempLabel->setFont(font);
+
 
 	// ISHRAQ _ connect Mylabel object to thread, for temp extraction
 	myLabel.connectToThread(thread);
@@ -160,16 +171,18 @@ int main( int argc, char **argv )
 	if (0 <= rangeMin) thread->useRangeMinValue(rangeMin);
 	if (0 <= rangeMax) thread->useRangeMaxValue(rangeMax);
 	QObject::connect(thread, SIGNAL(updateImage(QImage)), &myLabel, SLOT(setImage(QImage)));
+	QObject::connect(thread, SIGNAL(updateText(QString)), tempLabel, SLOT(setTemp(QString)));
+
 	
 	//connect ffc button to the thread's ffc action
-	QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
+	//QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
 	thread->start();
 	
 	//TODO: connect text area to TemperatureValue
 	//test_1: connect text area to pixel coords
 
 
-	myWidget->show();
+	myWidget->showFullScreen();
 
 	return a.exec();
 }

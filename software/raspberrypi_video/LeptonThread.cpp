@@ -7,6 +7,11 @@
 #include "SPI.h"
 #include "Lepton_I2C.h"
 
+#define POINT_x1 60
+#define POINT_y1 45
+#define POINT_x2 100
+#define POINT_y2 75
+
 #define PACKET_SIZE 164
 #define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
 #define PACKETS_PER_FRAME 60
@@ -26,9 +31,9 @@ LeptonThread::LeptonThread() : QThread()
 	selectedColormapSize = get_size_colormap_ironblack();
 
 	//
-	typeLepton = 2; // 2:Lepton 2.x  / 3:Lepton 3.x
-	myImageWidth = 80;
-	myImageHeight = 60;
+	typeLepton = 3; // 2:Lepton 2.x  / 3:Lepton 3.x
+	myImageWidth = 160;
+	myImageHeight = 120;
 
 	//
 	spiSpeed = 20 * 1000 * 1000; // SPI bus speed 20MHz
@@ -112,8 +117,6 @@ void LeptonThread::run()
 	//create the initial image
 	myImage = QImage(myImageWidth, myImageHeight, QImage::Format_RGB888);
 
-
-
 	const int *colormap = selectedColormap;
 	const int colormapSize = selectedColormapSize;
 	uint16_t minValue = rangeMin;
@@ -125,11 +128,23 @@ void LeptonThread::run()
 
 	//open spi port
 	SpiOpenPort(0, spiSpeed);
-	int flag = 1;
+	//int flag = 1;
 
 	float temperatureOfPixel = 0;
 
+	uint32_t counter = 0;
+
 	while(true) {
+		//printf("\ncounter = %u\n", counter);
+
+		// ISHRAQ __ AUTOCALIBRATE VIA FFC AFTER A SPECIFIED DELAY.
+		// in the following IF condition, change comparison value to change delay. Default is 1000
+		
+		// if(counter++ == 1000){
+		// 	printf("[DEBUG] Performed an FFC\n");
+		// 	performFFC();
+		// 	counter = 0;
+		// }
 
 		// printf("%.2f\n",matrix[0][0]);
 
@@ -278,7 +293,9 @@ void LeptonThread::run()
 			n_zero_value_drop_frame = 0;
 		}
 
-		//lets emit the signal for update
+		// ISHRAQ _ DRAWS THE RECTANGLE
+
+
 		emit updateImage(myImage);
 		// emit updateText(temperature);
 	}
@@ -299,17 +316,19 @@ void LeptonThread::log_message(uint16_t level, std::string msg)
 	}
 }
 
-// ISHRAQ _ Simple Get temperature function, but since video feed is 320x240, 
-// the co-ordinates need to mapped to 160x120. Thankfully, 160x120 is simply half the resolution of 320x240,
-// So to map, x is divided by 2, and y is divided by 2 to get the index of 2D matrix
 
 float LeptonThread::getTempFromXY(int x, int y){
-	x = x/2;
-	y = y/2;
-	printf("[Debug] Getting value from (%d, %d) : %.2f\n", x, y, matrix[y][x]);
+	printf("[DEBUG] Getting value from (%d, %d) : %.2f\n", x, y, matrix[y][x]);
 	return matrix[y][x];
 }
 
+void LeptonThread::startTimeout(){
+	QTimer::singleShot(2500, this, SLOT(timeout()));
+}
+
+void LeptonThread::timeout(){
+	updateText(QString("Waiting for next scan"));
+}
 
 float LeptonThread::getTempFromArea(int x1, int y1, int x2, int y2){
 	float maxValue = 0.0;
@@ -318,10 +337,12 @@ float LeptonThread::getTempFromArea(int x1, int y1, int x2, int y2){
 		for(int j=x1; j<x2; j++){
 			if(maxValue < matrix[i][j]){
 				maxValue = matrix[i][j];
-				foundAt = QPoint(j, i);
+				foundAt = QPoint(j, i);	
 			}
 		}
 	}
 	printf("[Debug] Found %.2f °C at the point (%d, %d)\n", maxValue, foundAt.x(), foundAt.y());
+	startTimeout();
+	emit updateText(QString("Temperature found:\n") + QString::number(maxValue));
 	return maxValue;
 }
