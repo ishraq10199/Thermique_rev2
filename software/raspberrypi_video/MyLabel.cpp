@@ -6,10 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define POINT_x1 60
-#define POINT_y1 45
-#define POINT_x2 100
-#define POINT_y2 75
+#include "rectangle.h"
 
 #define scaleFactor 6
 
@@ -17,19 +14,26 @@ MyLabel::MyLabel(QWidget *parent) : QLabel(parent)
 {
   lastPoint = QPoint(-1, -1);
 
-  std::ifstream file;
-  file.open("coords.txt", std::ifstream::in);
-  // ISHRAQ __ CHANGE RECTANGLE WHICH IS TO BE SCANNED
+  int x1, x2, y1, y2;
+  
+  x1 = POINT_x1;
+  y1 = POINT_y1;
+  x2 = POINT_x2;
+  y2 = POINT_y2;
 
-  int x1, y1, x2, y2;
-  if(file.is_open()){
-    file >> x1 >> y1 >> x2 >> y2;
-    //std::cout << "X1: " << x1 << ", Y1: " << y1 << std::endl;
-    file.close();
-  }
-  else{
-    std::cout << "Error getting co-ordinates." << std::endl;
-  }
+  // std::ifstream file;
+  // file.open("coords.txt", std::ifstream::in);
+  // // ISHRAQ __ CHANGE RECTANGLE WHICH IS TO BE SCANNED
+
+  // int x1, y1, x2, y2;
+  // if(file.is_open()){
+  //   file >> x1 >> y1 >> x2 >> y2;
+  //   //std::cout << "X1: " << x1 << ", Y1: " << y1 << std::endl;
+  //   file.close();
+  // }
+  // else{
+  //   std::cout << "Error getting co-ordinates." << std::endl;
+  // }
 
   areaPointTopLeft = QPoint(x1, y1);
   areaPointBottomRight = QPoint(x2, y2);

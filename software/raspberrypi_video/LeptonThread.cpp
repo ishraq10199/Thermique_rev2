@@ -1,16 +1,15 @@
 #include <iostream>
 #include <string>
 
+#include <QPainter>
+
 #include "LeptonThread.h"
 
 #include "Palettes.h"
 #include "SPI.h"
 #include "Lepton_I2C.h"
 
-#define POINT_x1 60
-#define POINT_y1 45
-#define POINT_x2 100
-#define POINT_y2 75
+#include "rectangle.h"
 
 #define PACKET_SIZE 164
 #define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
@@ -294,7 +293,11 @@ void LeptonThread::run()
 		}
 
 		// ISHRAQ _ DRAWS THE RECTANGLE
-
+		QPainter qPainter(&myImage);
+		qPainter.setBrush(Qt::NoBrush);
+		qPainter.setPen(Qt::green);
+		qPainter.drawRect(POINT_x1, POINT_y1, POINT_x2-POINT_x1, POINT_y2-POINT_y1);
+		qPainter.end();
 
 		emit updateImage(myImage);
 		// emit updateText(temperature);
