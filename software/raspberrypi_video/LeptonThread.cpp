@@ -266,7 +266,10 @@ void LeptonThread::run()
 					break;
 				}
 
-				temperatureOfPixel = ((float)valueFrameBuffer/100 - 273.15);
+///_______________________________________Calibration Space Here_________________________________________________///
+
+				temperatureOfPixel = ((float)valueFrameBuffer/100 - 273) * (9.0/5.0) + 32.0;
+///______________________________________________________________________________________________________________///
 				
 				value = (valueFrameBuffer - minValue) * scale;
 				
@@ -321,16 +324,16 @@ void LeptonThread::log_message(uint16_t level, std::string msg)
 
 
 float LeptonThread::getTempFromXY(int x, int y){
-	printf("[DEBUG] Getting value from (%d, %d) : %.2f\n", x, y, matrix[y][x]);
+	// printf("[DEBUG] Getting value from (%d, %d) : %.2f\n", x, y, matrix[y][x]);
 	return matrix[y][x];
 }
 
 void LeptonThread::startTimeout(){
-	QTimer::singleShot(2500, this, SLOT(timeout()));
+	QTimer::singleShot(3000, this, SLOT(timeout()));
 }
 
 void LeptonThread::timeout(){
-	updateText(QString("Waiting for next scan"));
+	updateText(QString("<font color='white'>Waiting for next scan</font>"));
 }
 
 float LeptonThread::getTempFromArea(int x1, int y1, int x2, int y2){
@@ -344,8 +347,8 @@ float LeptonThread::getTempFromArea(int x1, int y1, int x2, int y2){
 			}
 		}
 	}
-	printf("[Debug] Found %.2f °C at the point (%d, %d)\n", maxValue, foundAt.x(), foundAt.y());
+	//printf("[Debug] Found %.2f Celsius at the point (%d, %d)\n", maxValue, foundAt.x(), foundAt.y());
 	startTimeout();
-	emit updateText(QString("Temperature found:\n") + QString::number(maxValue));
+	emit updateText(QString("<font color='green'>Temperature found:\n") + QString::number(maxValue, 'f', 1) + " F</font>");
 	return maxValue;
 }

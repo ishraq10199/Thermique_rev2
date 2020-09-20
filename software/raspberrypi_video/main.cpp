@@ -3,6 +3,8 @@
 #include <QMutex>
 #include <QMessageBox>
 #include <QString>
+#include <QPainter>
+#include <QPalette>
 
 #include <iostream>
 #include <string>
@@ -17,7 +19,7 @@
 #include "MyLabel.h"
 #include "TempLabel.h"
 
-#define scaleFactor 6
+#include "scaleFactor.h"
 
 
 void printUsage(char *cmd) {
@@ -112,6 +114,14 @@ int main( int argc, char **argv )
 	QWidget *myWidget = new QWidget;
 	myWidget->setGeometry(400, 300, 340, 290);
 
+	QPalette pal;
+
+	// set black background
+	pal.setColor(QPalette::Background, Qt::black);
+	myWidget->setAutoFillBackground(true);
+	myWidget->setPalette(pal);
+
+
 	//create an image placeholder for myLabel
 	//fill the top left corner with red, just bcuz
 	QImage myImage;
@@ -125,7 +135,7 @@ int main( int argc, char **argv )
 
 	//create a label, and set it's image to the placeholder
 	MyLabel myLabel(myWidget);
-	myLabel.setGeometry(0, 0, 160*scaleFactor, 120*scaleFactor);
+	myLabel.setGeometry(10, 10, 160*scaleFactor, 120*scaleFactor);
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
 	//create a FFC button
 	//QPushButton *button1 = new QPushButton("FFC Reset", myWidget);
@@ -134,12 +144,21 @@ int main( int argc, char **argv )
 
 	// __ ISHRAQ __ CREATE CUSTOM LABEL TO SHOW TEMPERATURE [Future plan]
 	TempLabel * tempLabel = new TempLabel(myWidget);
+	tempLabel->setAlignment(Qt::AlignCenter);
 	tempLabel->connectToLabel(&myLabel);
-	tempLabel->setGeometry(960 + 20, 50 + 0, 500, 500);
+	tempLabel->setGeometry(640 + 20, 50 + 0, 620, 500);
 
+		
 
+	QLabel * bottomBox = new QLabel(myWidget);
+	bottomBox->setGeometry(10, 480 + 20, 1260, 210);
 
-
+	QFont x = bottomBox->font();
+	x.setPointSize(22);
+	x.setBold(false);
+	bottomBox->setFont(x);
+	bottomBox->setAlignment(Qt::AlignCenter);
+	bottomBox->setText("<font color='white'>Please make sure that your forehead is visible inside the green box.</font>");
 
 	//create a thread to gather SPI data
 	//when the thread emits updateImage, the label should update its image accordingly
@@ -151,7 +170,7 @@ int main( int argc, char **argv )
 	s =   "X: " + thread->lastPoint.x();
 	s +=  ", Y: " + thread->lastPoint.y();
 
-	tempLabel->setText("Not Scanned");
+	tempLabel->setText("<font color='white'>Waiting for next scan</font>");
 
 	// SET FONT OF LABEL:
 	QFont font = tempLabel->font();
@@ -177,6 +196,7 @@ int main( int argc, char **argv )
 	//connect ffc button to the thread's ffc action
 	//QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
 	thread->start();
+	thread->performFFC();
 	
 	//TODO: connect text area to TemperatureValue
 	//test_1: connect text area to pixel coords

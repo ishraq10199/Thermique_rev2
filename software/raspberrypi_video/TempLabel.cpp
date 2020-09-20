@@ -17,6 +17,9 @@ TempLabel::~TempLabel()
 
 //when the system calls setImage, we'll set the label's pixmap
 void TempLabel::setTemp(QString text) {
+  QString s = "<font color='white'>";
+  s = s + text;
+  s = s + "</font>";
   setText(text);
 }
 void TempLabel::connectToLabel(MyLabel * ml){
