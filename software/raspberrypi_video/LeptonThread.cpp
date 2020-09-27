@@ -2,7 +2,6 @@
 #include <string>
 
 #include <QPainter>
-
 #include "LeptonThread.h"
 
 #include "Palettes.h"
@@ -131,7 +130,7 @@ void LeptonThread::run()
 
 	float temperatureOfPixel = 0;
 
-	uint32_t counter = 0;
+	
 
 	while(true) {
 		//printf("\ncounter = %u\n", counter);
@@ -299,7 +298,14 @@ void LeptonThread::run()
 		QPainter qPainter(&myImage);
 		qPainter.setBrush(Qt::NoBrush);
 		qPainter.setPen(Qt::green);
+
+//---------------- SOCKET --- GET x1 y1 x2 y2 values from NVIDIA's server --- RUN AT PORT 12345 -------------------//
+		
+//----------------  end of SOCKET --- only change values of the following params ----------------------------------//
+		
+		// qPainter.drawRect(POINT_x1, POINT_y1, POINT_x2-POINT_x1, POINT_y2-POINT_y1);
 		qPainter.drawRect(POINT_x1, POINT_y1, POINT_x2-POINT_x1, POINT_y2-POINT_y1);
+		
 		qPainter.end();
 
 		emit updateImage(myImage);
