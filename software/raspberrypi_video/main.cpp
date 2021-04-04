@@ -196,7 +196,7 @@ int main( int argc, char **argv )
 	//connect ffc button to the thread's ffc action
 	//QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
 	thread->start();
-	thread->performFFC();
+	//thread->performFFC();
 	
 	//TODO: connect text area to TemperatureValue
 	//test_1: connect text area to pixel coords
