@@ -1,4 +1,4 @@
-## This codebase was cloned from groupgets, and modified for personal necessities.
+## This codebase is valid for Rev2 only
 
 
 ## raspberrypi_video [Edited]
