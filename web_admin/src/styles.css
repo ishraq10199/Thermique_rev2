@@ -1,0 +1,15 @@
+@import url("https://db.onlinewebfonts.com/c/5829a1ca1ee44b04613adb95c856e0c8?family=Mullingar");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.svg-label{
+    height: 25px;
+    width: 25px;
+}
+
+.svg-btn{
+    height: 20px;
+    width: 20px;
+}
