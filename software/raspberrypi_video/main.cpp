@@ -163,6 +163,8 @@ int main( int argc, char **argv )
 	//create a thread to gather SPI data
 	//when the thread emits updateImage, the label should update its image accordingly
 	LeptonThread *thread = new LeptonThread();
+	
+	std::cout << "Thread created" << std::endl;
 
 
 	// ISHRAQ _ CUSTOM LABEL UPDATE FROM thread
@@ -181,6 +183,7 @@ int main( int argc, char **argv )
 
 	// ISHRAQ _ connect Mylabel object to thread, for temp extraction
 	myLabel.connectToThread(thread);
+	std::cout << "Connected to Thread" << std::endl;
 
 	thread->setLogLevel(loglevel);
 	thread->useColormap(typeColormap);
@@ -195,15 +198,19 @@ int main( int argc, char **argv )
 	
 	//connect ffc button to the thread's ffc action
 	//QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
+	
+	std::cout << "Before start" << std::endl;
 	thread->start();
+	std::cout << "After start" << std::endl;
 	//thread->performFFC();
+	std::cout << "After FFC" << std::endl;
 	
 	//TODO: connect text area to TemperatureValue
 	//test_1: connect text area to pixel coords
 
-
+	std::cout << "Program launched" << std::endl;
 	myWidget->showFullScreen();
-
+	//myWidget->show();
 	return a.exec();
 }
 

@@ -8,6 +8,7 @@
 #include <QtCore>
 #include <QPixmap>
 #include <QImage>
+#include <QUdpSocket>
 
 #define PACKET_SIZE 164
 #define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
@@ -46,13 +47,20 @@ public:
 public slots:
   void performFFC();
   void timeout();
+  void processPendingDatagrams();
 
 
 signals:
   void updateText(QString);
   void updateImage(QImage);
+  void readyRead();
 
 private:
+  int x1;
+  int y1;
+  int x2;
+  int y2;
+  bool ok;
   QWidget * parent;
   void log_message(uint16_t, std::string);
   uint16_t loglevel;
@@ -72,6 +80,8 @@ private:
   uint8_t result[PACKET_SIZE*PACKETS_PER_FRAME];
   uint8_t shelf[4][PACKET_SIZE*PACKETS_PER_FRAME];
   uint16_t *frameBuffer;
+
+  QUdpSocket * udpSocket;
 
 };
 

@@ -19,6 +19,11 @@
 
 LeptonThread::LeptonThread() : QThread()
 {
+	x1 = POINT_x1;
+	y1 = POINT_y1;
+	x2 = POINT_x2;
+	y2 = POINT_y2;
+
 	lastPoint = QPoint(-1, -1);
 	//
 	loglevel = 0;
@@ -41,6 +46,16 @@ LeptonThread::LeptonThread() : QThread()
 	autoRangeMax = true;
 	rangeMin = 30000;
 	rangeMax = 32000;
+
+	udpSocket = new QUdpSocket(this);
+    // udpSocket->bind(QHostAddress::Any, 5005);
+	udpSocket->bind(QHostAddress::Any, 5005);
+
+	processPendingDatagrams();
+	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()),Qt::QueuedConnection);
+
+
+    
 }
 
 LeptonThread::~LeptonThread() {
@@ -108,6 +123,42 @@ void LeptonThread::useRangeMaxValue(uint16_t newMaxValue)
 {
 	autoRangeMax = false;
 	rangeMax = newMaxValue;
+}
+
+void LeptonThread::processPendingDatagrams(){
+	while(udpSocket->hasPendingDatagrams()){
+		QByteArray buffer;
+		buffer.resize(udpSocket->pendingDatagramSize());
+		
+		QHostAddress sender;
+		quint16 senderPort;
+		
+		// qint64 QUdpSocket::readDatagram(char * data, qint64 maxSize, 
+		//                 QHostAddress * address = 0, quint16 * port = 0)
+		// Receives a datagram no larger than maxSize bytes and stores it in data. 
+		// The sender's host address and port is stored in *address and *port 
+		// (unless the pointers are 0).
+		
+		udpSocket->readDatagram(buffer.data(), buffer.size(),
+							&sender, &senderPort);
+
+		QString coordinates = QString(buffer);
+		QStringList point_array= coordinates.split(',');
+
+		x1=point_array[0].toInt(&ok, 10)/4;
+		y1=point_array[1].toInt(&ok, 10)/4;
+		x2=point_array[2].toInt(&ok, 10)/4;
+		y2=point_array[3].toInt(&ok, 10)/4;
+
+		if(!ok){
+			x1 = POINT_x1;
+			x2 = POINT_x2;
+			y1 = POINT_y1;
+			y2 = POINT_y2;
+		}
+		
+
+	}
 }
 
 void LeptonThread::run()
@@ -300,11 +351,15 @@ void LeptonThread::run()
 		qPainter.setPen(Qt::green);
 
 //---------------- SOCKET --- GET x1 y1 x2 y2 values from NVIDIA's server --- RUN AT PORT 12345 -------------------//
+	
+			qPainter.drawRect(x1, y1, x2-x1, y2-y1);
+			std::cout<< "Current co-ordinates: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << std::endl; 
+
 		
 //----------------  end of SOCKET --- only change values of the following params ----------------------------------//
 		
 		// qPainter.drawRect(POINT_x1, POINT_y1, POINT_x2-POINT_x1, POINT_y2-POINT_y1);
-		qPainter.drawRect(POINT_x1, POINT_y1, POINT_x2-POINT_x1, POINT_y2-POINT_y1);
+		// qPainter.drawRect(POINT_x1, POINT_y1, POINT_x2-POINT_x1, POINT_y2-POINT_y1);
 		
 		qPainter.end();
 
